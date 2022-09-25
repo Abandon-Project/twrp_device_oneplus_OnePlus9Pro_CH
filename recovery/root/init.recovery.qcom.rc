@@ -26,17 +26,20 @@
 #
 
 on early-fs
-    write /proc/sys/kernel/sched_lib_name "recovery,Updater,updater,update_engine_sideload"
+    write /proc/sys/kernel/sched_lib_name "recovery,magiskboot,Updater,updater,update_engine_sideload"
     write /proc/sys/kernel/sched_lib_mask_force 255
 
 on fs
-    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw   
+    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw  
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
     chmod 0660 /dev/qseecom
     chown system drmrpc /dev/qseecom
     chmod 0664 /dev/ion
     chown system system /dev/ion
+    # Mount firmware
+    mkdir /firmware
+    mount vfat /dev/block/bootdevice/by-name/modem${ro.boot.slot_suffix} /firmware ro
     install_keyring
 
 on init
@@ -44,8 +47,18 @@ on init
     start boot-hal-1-1
 
 on boot
-    start health-hal-2-1
     setprop sys.usb.config adb
+
+on property:twrp.modules.loaded=true
+    # Load ADSP firmware for PMIC
+    wait /sys/kernel/boot_adsp/boot
+    write /sys/kernel/boot_adsp/boot 1
+    wait /sys/class/power_supply/battery
+    start health-hal-2-1
+    umount /firmware
+    
+on property:twrp.decrypt.done=true
+    setprop ro.separate.soft ${ro.boot.prjname}    
 
 on property:vendor.sys.listeners.registered=true
     start keymaster-4-1
@@ -68,4 +81,3 @@ service gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service-qt
     group root
     disabled
     seclabel u:r:recovery:s0
-

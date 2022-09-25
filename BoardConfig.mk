@@ -147,7 +147,7 @@ TW_INCLUDE_LIBRESETPROP := true
 # TWRP specific build flags
 TW_THEME := portrait_hdpi
 ifeq ($(TW_DEVICE_VERSION),)
-TW_DEVICE_VERSION=13.0
+TW_DEVICE_VERSION=13.0-Abandon
 endif
 RECOVERY_SDCARD_ON_DATA := true
 TARGET_RECOVERY_QCOM_RTC_FIX := true
@@ -157,7 +157,6 @@ TW_INCLUDE_NTFS_3G := true
 TW_USE_TOOLBOX := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
-TW_MAX_BRIGHTNESS := 2047
 ifeq ($(TW_DEFAULT_LANGUAGE),)
 TW_DEFAULT_LANGUAGE := zh_CN
 endif
@@ -166,8 +165,6 @@ TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_NO_SCREEN_BLANK := true
 TW_EXCLUDE_APEX := true
-TW_HAS_EDL_MODE := true
-TW_SUPPORT_INPUT_AIDL_HAPTICS :=true
 TW_LOAD_VENDOR_MODULES := "adsp_loader_dlkm.ko apr_dlkm.ko q6_notifier_dlkm.ko q6_pdr_dlkm.ko snd_event_dlkm.ko"
 
 
